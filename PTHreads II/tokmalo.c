@@ -73,10 +73,14 @@ void *Tokenize(void* rank) {
    char my_line[MAX];
    char *my_string;
 
+   FILE *fp;
+   fp=fopen("pru.txt","r");
    /* Force sequential reading of the input */
-   sem_wait(&sems[my_rank]);  
-   fg_rv = fgets(my_line, MAX, stdin);
-   sem_post(&sems[next]);  
+    while(feof(fp)==0){
+	   sem_wait(&sems[my_rank]);  
+	   fg_rv = fgets(my_line, MAX, fp);
+	   sem_post(&sems[next]);  
+	 
    while (fg_rv != NULL) {
       printf("Thread %ld > my line = %s", my_rank, my_line);
 
@@ -94,6 +98,7 @@ void *Tokenize(void* rank) {
       fg_rv = fgets(my_line, MAX, stdin);
       sem_post(&sems[next]);  
    }
-
+}
+   fclose(fp);
    return NULL;
 }  /* Tokenize */
